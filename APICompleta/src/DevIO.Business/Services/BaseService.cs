@@ -1,8 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
 using DevIO.Business.Notifications;
 using FluentValidation;
-using FluentValidation.Results;
 
 namespace DevIO.Business.Services
 {
@@ -17,10 +17,12 @@ namespace DevIO.Business.Services
 
         protected void Notificar(ValidationResult validationResult)
         {
-            foreach (var error in validationResult.Errors)
-            {
-                Notificar(error.ErrorMessage);
-            }
+            if (validationResult.ErrorMessage is not null)
+            Notificar(validationResult.ErrorMessage);
+            // foreach (var error in validationResult.Errors)
+            // {
+            //     Notificar(error);
+            // }
         }
 
         protected void Notificar(string mensagem)
@@ -34,7 +36,11 @@ namespace DevIO.Business.Services
 
             if(validator.IsValid) return true;
 
-            Notificar(validator);
+            // Notificar(validator);
+            foreach (var error in validator.Errors)
+            {
+                Notificar(error.ErrorMessage);
+            }
 
             return false;
         }
